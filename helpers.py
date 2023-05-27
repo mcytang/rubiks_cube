@@ -31,7 +31,7 @@ class face():
         rotates a face in place
         """
         theta = np.radians(90 if prime else -90)
-        
+
         rot_matrix = np.array([[np.cos(theta), -np.sin(theta)],
                         [np.sin(theta), np.cos(theta)]], dtype=int)
 
@@ -49,14 +49,17 @@ class face():
         """
         flips face across y axis in place
         """
-        self.state = np.array([[self.state[i,-(j+1)] for j in range(self.N)] for i in range(self.N)], dtype = 'object')
+        new = np.array(\
+            [[self.state[i,-(j+1)] for j in range(self.N)] for i in range(self.N)],\
+            dtype = 'object')
+        self.state = new
 
     def ver_flip(self):
         """
         flips face acros x axis in place
         """
         self.state = np.array([self.state[-1-i] for i in range(self.N)], dtype = 'object')
-        
+
     def as_int(self):
         """
         converts entries to integer type
@@ -64,13 +67,13 @@ class face():
 
         if self.type == int:
             return
-        
+
         for i in range(self.N):
             for j in range(self.N):
                 self.state[i,j] = C2N[self.state[i,j]]
 
         self.type = int
-                
+
     def as_str(self):
         """
         converts entries to strings
@@ -78,47 +81,9 @@ class face():
 
         if self.type == str:
             return
-        
+
         for i in range(self.N):
             for j in range(self.N):
                 self.state[i,j] = N2C[self.state[i,j]]
 
         self.type = str
-    
-
-def rotate(arr, prime = False):
-    """
-    rotates a face in place
-    """
-    N = len(arr)
-    theta = np.radians(270 if prime else 90)
-    
-    rot_matrix = np.array([[np.cos(theta), -np.sin(theta)],
-                       [np.sin(theta), np.cos(theta)]], dtype=int)
-
-
-    y_coords, x_coords = np.meshgrid(np.arange(N),np.arange(N))
-    coords = np.vstack([x_coords.flatten(), y_coords.flatten()])
-
-    c = (N/2 - 0.5) * np.ones_like(coords)
-    rotated_coords = rot_matrix @ (coords- c) + c
-    rotated_coords = rotated_coords.astype(int)
-
-    arr[rotated_coords[0], rotated_coords[1]] = arr.flatten()
-
-def hor_flip(arr):
-    """
-    flips face across y axis, not in place
-    """
-    N = len(arr)
-    return [[arr[i,-(j+1)] for j in range(N)] for i in range(N)]
-
-def ver_flip(arr):
-    pass
-
-if __name__=='__main__':
-    N=3
-    x = np.array(range(N**2)).reshape(N,N)
-    print(x)
-    rotate(x,False)
-    print(x)

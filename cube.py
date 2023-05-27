@@ -1,7 +1,7 @@
 import numpy as np
 import tabulate
 
-from helpers import *
+from helpers import face
 
 
 
@@ -9,12 +9,12 @@ class rubiks_cube():
 
     def __init__(self, N=3):
         """
-        self.left, self.front, self.right and self.up are ordered as though looking squarely at the face
+        self.left, self.front, self.right and self.up ordered as though looking squarely at the face
         self.down is oriented so that self.front would be on top
         self.back is oriented as though looking through a transparent front
         """
         self.N = N
-        
+
         self.front = face('blue', self.N)
         self.back = face('green', self.N)
         self.left = face('orange', self.N)
@@ -39,12 +39,18 @@ class rubiks_cube():
         print(table, '\n')
 
     def as_int(self):
+        """
+        converts tile names to integers
+        """
         if self.state == int:
             return
         for face in self.faces:
             face.as_int()
-                
+
     def as_str(self):
+        """
+        convers tile names to integers
+        """
         if self.state == str:
             return
         for face in self.faces:
@@ -96,6 +102,9 @@ class rubiks_cube():
 
     # basic move
     def F(self, prime = False):
+        """
+        moves front clockwise. If prime them moves anticlockwise
+        """
         self.front.rotate(prime)
         layer = np.array([\
             np.array([l[-1] for l in self.left.state], dtype = 'object'),\
@@ -111,6 +120,9 @@ class rubiks_cube():
 
     # remaining moves in terms of self.F
     def B(self, prime = False):
+        """
+        moves back clockwise. If prime them moves anticlockwise
+        """
         self.y()
         self.y()
         self.F(prime)
@@ -118,40 +130,50 @@ class rubiks_cube():
         self.y()
 
     def L(self, prime = False):
+        """
+        moves left clockwise. If prime them moves anticlockwise
+        """
         self.y(True)
         self.F(prime)
         self.y(False)
 
     def R(self, prime = False):
+        """
+        moves right clockwise. If prime them moves anticlockwise
+        """
         self.y(False)
         self.F(prime)
         self.y(True)
 
     def U(self, prime = False):
+        """
+        moves up clockwise. If prime them moves anticlockwise
+        """
         self.x(True)
         self.F(prime)
         self.x(False)
 
-    def B(self, prime = False):
-        self.x(False)
-        self.F(prime)
-        self.x(True)
-
-    def string_to_move_list(self, S):
+    def string_to_move_list(self, move_string):
+        """
+        converts move string to list to accommodate primes
+        """
         move_list = []
         idx = 0
-        while idx < len(S):
-            move = S[idx]
+        while idx < len(move_string):
+            move = move_string[idx]
             idx += 1
-            if idx < len(S):
-                if S[idx] == "'":
+            if idx < len(move_string):
+                if move_string[idx] == "'":
                     move += "'"
                     idx += 1
             move_list.append(move)
         return move_list
 
-    def move(self, S, show_states=False):
-        move_list = self.string_to_move_list(S)
+    def move(self, move_string, show_states=False):
+        """
+        implements list of moves
+        """
+        move_list = self.string_to_move_list(move_string)
         for move in move_list:
             prime = False
             if move[-1] == "'":
@@ -185,6 +207,3 @@ if __name__=='__main__':
     S = "RUR'U'"
     x.as_int()
     x.move(S,show_states=True)
-
-
-    
